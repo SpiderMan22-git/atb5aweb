@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="descripion" content="اطبخها منصة طبخ متكاملة تساعدك على اكتشاف وصفات جديدة، تقييمها ومشاركة رأيك، إضافة وصفاتك الخاصة، أو الحصول على وصفة مناسبة حسب المكونات المتوفرة لديك"/>
+    <title>اطبخها - وصفات من مكوناتك</title>
+    <link rel="shortcut icon" href="atb7a.jpeg" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google AdSense Script (مطلوب مرة واحدة في الصفحة) -->
+    <!-- استبدل ca-pub-XXXXXXX برقم الناشر الخاص بك من جوجل -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+    <style>
+        /* -- CSS Variables & Base -- */
+        :root {
+            --primary: #FF6B35; --secondary: #F7C59F; --bg: #FAFAFA;
+            --card: #FFFFFF; --text: #2D3436; --muted: #636E72;
+            --shadow: 0 2px 15px rgba(0,0,0,0.05); --hover-shadow: 0 10px 30px rgba(255, 107, 53, 0.15);
+            --radius: 16px; --transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        [data-theme="dark"] { 
+            --bg: #121212; --card: #1E1E1E; --text: #E0E0E0; --muted: #AAAAAA; 
+            --secondary: #2C2C2C; --shadow: 0 2px 15px rgba(0,0,0,0.3); 
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* -- Animations -- */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+
+        /* -- Header -- */
+        header { background: var(--card); box-shadow: var(--shadow); position: sticky; top: 0; z-index: 1000; padding: 0.8rem 2rem; }
+        .header-container { max-width: 1400px; margin: auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .logo { font-size: 2rem; font-weight: 900; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .search-bar { flex: 1; min-width: 250px; max-width: 500px; background: var(--bg); border-radius: 50px; display: flex; align-items: center; padding: 0 1rem; border: 2px solid transparent; transition: var(--transition); }
+        .search-bar:focus-within { border-color: var(--primary); background: var(--card); }
+        .search-bar input { width: 100%; border: none; background: transparent; padding: 0.8rem; font-family: 'Cairo'; font-size: 1rem; color: var(--text); }
+        .nav-actions { display: flex; gap: 0.8rem; align-items: center; }
+        .btn { padding: 0.6rem 1.5rem; border-radius: 50px; cursor: pointer; font-family: 'Cairo'; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem; border: none; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(255,107,53,0.3); }
+        .icon-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--bg); border: none; cursor: pointer; font-size: 1.2rem; color: var(--text); position: relative; transition: var(--transition); }
+        .badge-notify { position: absolute; top: -5px; right: -5px; background: #e91e63; color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 0.7rem; display: flex; justify-content: center; align-items: center; }
+
+        /* -- Layout -- */
+        .main-wrapper { max-width: 1400px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: 300px 1fr; gap: 2rem; flex: 1; width: 100%; }
+        @media (max-width: 900px) { .main-wrapper { grid-template-columns: 1fr; } }
+
+        /* -- Sidebar -- */
+        .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+        .sticky-box { position: sticky; top: 100px; }
+        .filter-box { background: var(--card); padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow); }
+        .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid var(--bg); padding-bottom: 0.5rem; }
+        .section-head h3 { color: var(--primary); font-size: 1.1rem; }
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; max-height: 300px; overflow-y: auto; }
+        .tag { background: var(--bg); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.9rem; cursor: pointer; border: 1px solid transparent; transition: var(--transition); user-select: none; }
+        .tag:hover { border-color: var(--primary); color: var(--primary); }
+        .tag.active { background: var(--primary); color: white; }
+        .filter-select { width: 100%; padding: 0.8rem; border-radius: 8px; border: 2px solid var(--secondary); background: var(--bg); color: var(--text); font-family: 'Cairo'; margin-bottom: 0.8rem; }
+
+        /* -- Ad Spaces (Updated for Real Ads) -- */
+        /* تم تعديل الستايل ليناسب الاعلانات الحقيقية */
+        .ad-box { 
+            background: var(--bg); 
+            min-height: 250px; /* ارتفاع افتراضي للإعلان */
+            border-radius: var(--radius); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; /* عشان الاعلان ميزحفش بره */
+        }
+        .ad-wide { 
+            min-height: 100px; /* ارتفاع للبانر الافقي */
+            margin-bottom: 1.5rem; 
+        }
+        /* رسالة تظهر فقط اذا لم يتم تحميل اعلان */
+        .ad-fallback {
+            color: var(--muted); 
+            font-size: 0.8rem; 
+            text-align: center; 
+            display: none; /* مخفية افتراضياً */
+        }
+
+        /* -- Recipe Grid -- */
+        .content-area { display: flex; flex-direction: column; }
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        
+        .recipe-card { background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); position: relative; }
+        .recipe-card:hover { transform: translateY(-5px); box-shadow: var(--hover-shadow); }
+        .recipe-card:hover .card-image { transform: scale(1.1); }
+        .card-image-wrapper { height: 180px; width: 100%; overflow: hidden; border-bottom: 3px solid var(--primary); }
+        .card-image { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card-body { padding: 1.2rem; }
+        .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .fav-btn { background: none; border: none; cursor: pointer; font-size: 1.3rem; color: #ddd; transition: 0.2s; }
+        .fav-btn.active { color: #e91e63; transform: scale(1.2); }
+        .card-meta { display: flex; gap: 1rem; color: var(--muted); font-size: 0.85rem; margin-bottom: 0.8rem; }
+        .difficulty-badge { padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.75rem; color: white; font-weight: 700; }
+        .diff-easy { background: #27ae60; } .diff-med { background: #f39c12; } .diff-hard { background: #e74c3c; }
+
+        .admin-controls { display: flex; gap: 0.5rem; margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px dashed var(--secondary); }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 5px; width: 100%; cursor: pointer; font-family: 'Cairo'; border: none; color: white; }
+        .btn-edit { background: #3498db; }
+        .btn-delete { background: #e74c3c; }
+        .btn-view { background: transparent; border: 2px solid var(--primary); color: var(--primary); width: 100%; padding: 0.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-view:hover { background: var(--primary); color: white; }
+
+        /* -- Modals -- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: flex-start; z-index: 2000; padding: 2rem 1rem; overflow-y: auto; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--card); width: 100%; max-width: 700px; border-radius: var(--radius); position: relative; margin-bottom: 2rem; animation: fadeInUp 0.4s; }
+        .modal-close { position: absolute; top: 1rem; left: 1rem; background: rgba(0,0,0,0.5); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; z-index: 10; line-height: 35px; text-align: center; transition: 0.2s; }
+        .modal-close:hover { background: var(--primary); }
+        
+        .modal-content { padding: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-input { width: 100%; padding: 0.8rem; border: 2px solid var(--secondary); border-radius: 8px; background: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; transition: 0.2s; }
+        .form-input:focus { border-color: var(--primary); outline: none; }
+
+        /* -- Static Pages (About/Contact) -- */
+        .static-page-content { text-align: center; padding: 2rem; }
+        .static-page-content h2 { color: var(--primary); margin-bottom: 1.5rem; font-size: 2rem; }
+        .static-page-content p { margin-bottom: 1rem; line-height: 1.8; color: var(--muted); }
+        .contact-methods { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; }
+        .contact-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; background: var(--bg); padding: 1.5rem; border-radius: var(--radius); width: 150px; transition: 0.3s; text-decoration: none; color: var(--text); }
+        .contact-item:hover { transform: translateY(-5px); box-shadow: var(--shadow); background: var(--card); }
+        .contact-item i { font-size: 2rem; color: var(--primary); }
+        .contact-item span { font-weight: 600; font-size: 0.9rem; }
+
+        /* -- Detail & Interaction -- */
+        .detail-img { width: 100%; height: 300px; object-fit: cover; }
+        
+        /* -- Action Buttons -- */
+        .action-bar { display: flex; gap: 0.5rem; margin-top: 1rem; padding: 0.8rem; background: var(--bg); border-radius: 8px; justify-content: center; flex-wrap: wrap; }
+        .action-btn { padding: 0.5rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-family: 'Cairo'; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; transition: 0.2s; color: white; text-decoration: none;}
+        .btn-print { background: #636e72; } .btn-print:hover { background: #2d3436; }
+        .btn-share-wa { background: #25D366; }
+        .btn-share-tw { background: #1DA1F2; }
+        .btn-share-link { background: var(--muted); }
+        .btn-shopping { background: var(--primary); }
+
+        /* -- Checklist Steps -- */
+        .steps-checklist { list-style: none; padding: 0; }
+        .step-item { display: flex; align-items: flex-start; gap: 0.8rem; margin-bottom: 0.8rem; background: var(--bg); padding: 0.8rem; border-radius: 8px; transition: 0.2s; }
+        .step-item:hover { background: var(--secondary); }
+        .step-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+        .step-item label { cursor: pointer; width: 100%; text-align: right; }
+        .step-item input:checked + label { text-decoration: line-through; color: var(--muted); }
+
+        /* -- Star Rating -- */
+        .rating-group { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 0.2rem; margin: 1rem 0; }
+        .rating-group input { display: none; }
+        .rating-group label { cursor: pointer; font-size: 1.5rem; color: #ddd; transition: 0.2s; }
+        .rating-group label:hover, .rating-group label:hover ~ label, .rating-group input:checked ~ label { color: #f1c40f; }
+        
+        /* -- Comments -- */
+        .comments-section { margin-top: 2rem; border-top: 1px solid var(--secondary); padding-top: 1.5rem; }
+        .comment-box { background: var(--bg); padding: 1rem; border-radius: 8px; margin-bottom: 0.8rem; }
+        .comment-user { font-weight: 700; color: var(--primary); font-size: 0.9rem; }
+        .comment-date { font-weight: 400; color: var(--muted); font-size: 0.8rem; margin-right: 0.5rem; }
+        
+        /* -- Servings & Related -- */
+        .servings-control { display: flex; align-items: center; gap: 0.5rem; background: var(--bg); padding: 0.5rem 1rem; border-radius: 8px; margin-bottom: 1rem; width: fit-content; }
+        .servings-btn { width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--primary); color: white; cursor: pointer; font-size: 1.2rem; font-weight: bold; }
+        .related-section { margin-top: 2rem; border-top: 1px solid var(--secondary); padding-top: 1.5rem; }
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .related-card { background: var(--bg); border-radius: 8px; overflow: hidden; cursor: pointer; }
+        .related-card img { width: 100%; height: 80px; object-fit: cover; }
+        .related-card p { padding: 0.5rem; font-size: 0.9rem; font-weight: 600; text-align: center; }
+
+        /* -- Toast & Print -- */
+        #toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background-color: #333; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-weight: 600; display: flex; align-items: center; gap: 0.8rem; animation: slideIn 0.3s ease-out forwards; min-width: 250px; }
+        .toast.error { background-color: #e74c3c; } .toast.success { background-color: #27ae60; } .toast.info { background-color: #3498db; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: white; color: black; }
+            .action-bar, .comments-section, .modal-close, .rating-group, .related-section, .servings-control button { display: none !important; }
+            .detail-img { height: 150px; object-fit: cover; border-radius: 10px; }
+        }
+
+        /* -- Dynamic Inputs -- */
+        .ing-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .ing-row input { flex: 1; }
+        .ing-row .btn-del-row { background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 0 0.8rem; cursor: pointer; }
+
+        /* -- Footer Styles -- */
+        .site-footer {
+            background-color: var(--card);
+            border-top: 1px solid var(--secondary);
+            margin-top: auto;
+            font-size: 0.85rem;
+        }
+        .footer-top {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .footer-links { display: flex; gap: 1.5rem; }
+        .footer-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
+        .footer-links a:hover { color: var(--primary); }
+        .social-icons-footer { display: flex; gap: 0.8rem; }
+        .social-icons-footer a { color: var(--muted); font-size: 1rem; transition: color 0.2s; }
+        .social-icons-footer a:hover { color: var(--primary); }
+        .footer-bottom-bar {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        [data-theme="dark"] .footer-bottom-bar { background-color: #a84019; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <a href="#" class="logo" onclick="init()"><i class="fas fa-utensils"></i> اطبخها</a>
+        <div class="search-bar">
+            <input type="text" id="mainSearch" placeholder="ابحث باسم الوصفة أو المكونات..." oninput="handleSearch(this.value)">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="nav-actions">
+            <button class="btn btn-primary" onclick="openAddRecipeModal()"><i class="fas fa-plus"></i> أضف وصفتك</button>
+            <button class="icon-btn" onclick="openFavorites()"><i class="fas fa-heart"></i> <span class="badge-notify" id="favNotify">0</span></button>
+            <button class="icon-btn" onclick="openShoppingList()"><i class="fas fa-shopping-cart"></i> <span class="badge-notify" id="shopNotify">0</span></button>
+            <button class="icon-btn" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
+            <div id="authArea"></div>
+        </div>
+    </div>
+</header>
+
+<div class="main-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sticky-box">
+            <div class="filter-box">
+                <div class="section-head">
+                    <h3><i class="fas fa-carrot"></i> المكونات</h3>
+                    <button class="btn-outline" style="padding:0.2rem 0.8rem; font-size:0.8rem;" onclick="clearIngredients()">مسح</button>
+                </div>
+                <div class="tags-container" id="ingredientsTags"></div>
+                
+                <div style="margin-top:1rem;">
+                    <select class="filter-select" id="sortFilter" onchange="applyFilters()">
+                        <option value="newest">ترتيب: الأحدث</option>
+                        <option value="time">ترتيب: الأقل وقتاً</option>
+                        <option value="rating">ترتيب: الأعلى تقييماً</option>
+                    </select>
+                    <select class="filter-select" id="catFilter" onchange="applyFilters()">
+                        <option value="all">كل الأصناف</option>
+                        <option value="eastern">شرقي</option>
+                        <option value="western">غربي</option>
+                        <option value="healthy">صحي</option>
+                        <option value="sweets">حلويات</option>
+                    </select>
+                    <select class="filter-select" id="diffFilter" onchange="applyFilters()">
+                        <option value="all">كل المستويات</option>
+                        <option value="easy">سهل</option>
+                        <option value="medium">متوسط</option>
+                        <option value="hard">صعب</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- إعلان جوجل العمودي (Sidebar) -->
+            <div class="ad-box" style="margin-top: 1.5rem;">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                     data-ad-slot="1234567890"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content-area">
+        <!-- إعلان جوجل الأفقي (Horizontal) -->
+        <div class="ad-box ad-wide">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="0987654321"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <div class="recipe-grid" id="recipeGrid"></div>
+        <div id="noRes" style="display:none; text-align:center; padding:3rem; color:var(--muted); grid-column:1/-1;">
+            <i class="fas fa-sad-tear" style="font-size:3rem; margin-bottom:1rem;"></i><br>لم نجد نتائج مطابقة.
+        </div>
+    </main>
+</div>
+
+<!-- Modals Container -->
+
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+    <div class="modal" style="max-width:400px;">
+        <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
+        <div class="modal-content">
+            <h2 style="text-align:center; margin-bottom:1.5rem; color:var(--primary);">تسجيل الدخول</h2>
+            <div class="form-group"><input type="text" id="authName" class="form-input" placeholder="اسم المستخدم"></div>
+            <div class="form-group"><input type="password" id="authPass" class="form-input" placeholder="كلمة المرور"></div>
+            <button class="btn btn-primary" style="width:100%;" onclick="login()">دخول</button>
+        </div>
+    </div>
+</div>
+
+<!-- About Us Modal -->
+<div class="modal-overlay" id="aboutModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('aboutModal')">&times;</button>
+        <div class="static-page-content">
+            <h2>من نحن</h2>
+            <p>مرحباً بكم في موقع "اطبخها"، بوابتكم لعالم الطهي الشهي والمبتكر. نحن نؤمن بأن الطعام الجيد يجمع الناس، ومهمتنا هي تسهيل عملية الطهي وجعلها ممتعة للجميع.</p>
+            <p>يقدم موقعنا منصة تفاعلية تتيح لك البحث عن وصفات بناءً على المكونات المتوفرة لديك في المنزل، ومشاركة وصفاتك الخاصة مع المجتمع، وتقييم وتعليق الوصفات الأخرى.</p>
+            <p>فريقنا يعمل بجد لتوفير أفضل التجارب للمستخدمين، مع التركيز على سهولة الاستخدام وتنوع الوصفات. شكراً لانضمامكم إلينا في هذه الرحلة اللذيذة!</p>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Us Modal -->
+<div class="modal-overlay" id="contactModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('contactModal')">&times;</button>
+        <div class="static-page-content">
+            <h2>تواصل معنا</h2>
+            <p>نحن هنا لمساعدتك! لا تتردد في التواصل معنا عبر قنواتنا التالية:</p>
+            
+            <div class="contact-methods">
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/share/178kZtNCB4/" target="_blank" class="contact-item">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>تابعنا على فيسبوك</span>
+                </a>
+                
+                <!-- Email -->
+                <a href="mailto:atb7aweb@gmail.com" class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>راسلنا عبر البريد</span>
+                    <small style="font-size: 0.7rem; color: var(--muted);">atb7aweb@gmail.com</small>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Shopping List Modal -->
+<div class="modal-overlay" id="shoppingModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('shoppingModal')">&times;</button>
+        <div class="modal-content">
+            <h2 style="margin-bottom:1.5rem; color:var(--primary);"><i class="fas fa-shopping-cart"></i> قائمة التسوق</h2>
+            <div id="shoppingListContainer"></div>
+            <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+                <button class="btn btn-outline" style="flex:1" onclick="clearShoppingList()">مسح الكل</button>
+                <button class="btn btn-primary" style="flex:1" onclick="window.print()"><i class="fas fa-print"></i> طباعة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="addRecipeModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('addRecipeModal')">&times;</button>
+        <div class="modal-content">
+            <h2 id="formTitle" style="margin-bottom:1.5rem; color:var(--primary);">إضافة وصفة جديدة</h2>
+            <input type="hidden" id="editRecipeId">
+            
+            <div class="form-group">
+                <label>اسم الوصفة</label>
+                <input type="text" id="newName" class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <label>الصورة</label>
+                <div style="display:flex; gap:0.5rem;">
+                    <input type="text" id="newImg" class="form-input" placeholder="رابط الصورة (اختياري)">
+                    <label class="btn btn-outline" style="margin:0; cursor:pointer;">
+                        <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
+                        رفع
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>المكونات (الكمية والوحدة)</label>
+                <div id="ingredientsInputs"></div>
+                <button class="btn btn-outline" style="width:100%; margin-top:0.5rem;" onclick="addIngRow()">
+                    <i class="fas fa-plus"></i> إضافة مكون
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>الطريقة (كل خطوة في سطر)</label>
+                <textarea id="newSteps" class="form-input" rows="4"></textarea>
+            </div>
+
+            <div style="display:flex; gap:1rem;">
+                <select id="newCat" class="form-input" style="flex:1">
+                    <option value="eastern">شرقي</option>
+                    <option value="western">غربي</option>
+                    <option value="sweets">حلويات</option>
+                    <option value="healthy">صحي</option>
+                </select>
+                <select id="newDiff" class="form-input" style="flex:1">
+                    <option value="easy">سهل</option>
+                    <option value="medium">متوسط</option>
+                    <option value="hard">صعب</option>
+                </select>
+                <input type="number" id="newTime" class="form-input" placeholder="الوقت (د)" style="flex:1">
+                <input type="number" id="newServ" class="form-input" placeholder="الأشخاص" value="4" style="flex:1">
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="submitRecipe()">حفظ الوصفة</button>
+        </div>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('detailModal')">&times;</button>
+        <img id="detailImg" class="detail-img" src="" alt="Recipe">
+        <div class="modal-content" id="printArea">
+            <h2 id="detailTitle" style="color:var(--primary);"></h2>
+            <div style="display:flex; gap:1rem; color:var(--muted); margin:0.5rem 0 1rem; align-items:center;">
+                <span><i class="far fa-clock"></i> <span id="detailTime"></span> د</span>
+                <span id="detailDiff" class="difficulty-badge"></span>
+                <span><i class="fas fa-users"></i> <span id="detailServings"></span> أشخاص</span>
+            </div>
+
+            <div class="servings-control">
+                <span>ضبط الكمية:</span>
+                <button class="servings-btn" onclick="adjustServings(-1)">-</button>
+                <span id="currentServings" style="font-weight:bold; min-width:20px; text-align:center;">4</span>
+                <button class="servings-btn" onclick="adjustServings(1)">+</button>
+            </div>
+
+            <div class="action-bar">
+                <button class="action-btn btn-shopping" onclick="addToShoppingList()"><i class="fas fa-cart-plus"></i> أضف للتسوق</button>
+                <button class="action-btn btn-print" onclick="window.print()"><i class="fas fa-print"></i> طباعة</button>
+                <a href="#" class="action-btn btn-share-wa" id="shareWa" target="_blank"><i class="fab fa-whatsapp"></i> واتساب</a>
+                <button class="action-btn btn-share-link" onclick="copyLink()"><i class="fas fa-link"></i> نسخ</button>
+            </div>
+
+            <div style="background:var(--bg); padding:1rem; border-radius:8px; margin-bottom:1rem;">
+                <h4 style="margin-bottom:0.5rem;">قيم هذه الوصفة:</h4>
+                <div class="rating-group" id="ratingStars"></div>
+            </div>
+
+            <h3>المكونات</h3>
+            <ul id="detailIngs" style="padding-right:1.5rem; margin:1rem 0;"></ul>
+
+            <h3>الطريقة</h3>
+            <div id="detailSteps" style="margin-bottom:1rem;"></div>
+
+            <div class="related-section" id="relatedSection">
+                <h3>وصفات مشابهة</h3>
+                <div class="related-grid" id="relatedGrid"></div>
+            </div>
+
+            <div class="comments-section">
+                <h3 style="margin-bottom:1rem;">التعليقات</h3>
+                <div id="commentsList"></div>
+                <div class="comment-form" id="commentForm" style="display:none; gap:0.5rem; margin-top:1rem;">
+                    <input type="text" id="commentInput" class="form-input" placeholder="اكتب تعليقك هنا...">
+                    <button class="btn btn-primary" onclick="addComment()">أرسل</button>
+                </div>
+                <p id="loginToComment" style="color:var(--muted); font-size:0.9rem;">سجل دخولك لتتمكن من التعليق والتقييم.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="footer-top">
+        <div class="footer-logo" style="font-weight:900; color:var(--primary);">
+            <i class="fas fa-utensils"></i> اطبخها
+        </div>
+        
+        <div class="footer-links">
+            <a onclick="openAboutModal()">من نحن</a>
+            <a onclick="openContactModal()">تواصل معنا</a>
+        </div>
+
+        <div class="social-icons-footer">
+            <a href="https://www.facebook.com/share/178kZtNCB4/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        </div>
+    </div>
+    <div class="footer-bottom-bar">
+        شكراً لاختيارك موقعنا
+    </div>
+</footer>
+
+<script>
+    // --- 1. Data ---
+    const DEFAULT_INGREDIENTS_LIST = [
+        "بيض", "دقيق", "سكر", "ملح", "حليب", "زيت", "زبدة", "بصل", "ثوم", "طماطم", "خيار", "فلفل أخضر", "جزر", "بطاطس", "أرز", "معكرونة", "لحم مفروم", "صدور دجاج", "سمك", "جبن", "لبن زبادي", "سبانخ", "بروكلي", "عدس", "ليمون", "بهارات", "شوكولاتة", "عسل", "خميرة"
+    ];
+
+    const defaultRecipes = [
+        { id: 1, name: "بيتزا مارغريتا", img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600", time: 25, difficulty: "easy", category: "western", servings: 4, ingredients: [{qty: 2, unit: "كوب", name: "دقيق"}, {qty: 1, unit: "كوب", name: "جبن"}, {qty: 2, unit: "حبة", name: "طماطم"}, {qty: 0.5, unit: "كوب", name: "زيت"}], steps: "1. قطع الخبز.\n2. ضع الطماطم والجبن.\n3. اخبز 10 دقائق.", authorId: "system", authorName: "الموقع" },
+        { id: 2, name: "كبسة لحم تقليدية", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600", time: 60, difficulty: "hard", category: "eastern", servings: 6, ingredients: [{qty: 2, unit: "كوب", name: "أرز"}, {qty: 500, unit: "جرام", name: "لحم مفروم"}, {qty: 2, unit: "حبة", name: "طماطم"}, {qty: 1, unit: "ملعقة", name: "بهارات"}], steps: "1. يشوح اللحم.\n2. يضاف الأرز والبهارات.", authorId: "system", authorName: "الموقع" },
+        { id: 3, name: "سلطة سيزر", img: "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=600", time: 15, difficulty: "easy", category: "healthy", servings: 2, ingredients: [{qty: 2, unit: "كوب", name: "خس"}, {qty: 200, unit: "جرام", name: "صدور دجاج"}, {qty: 50, unit: "جرام", name: "جبن"}], steps: "1. اشوي الدجاج.\n2. اخلط المكونات.", authorId: "system", authorName: "الموقع" },
+        { id: 4, name: "كيك الشوكولاتة", img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600", time: 45, difficulty: "medium", category: "sweets", servings: 8, ingredients: [{qty: 200, unit: "جرام", name: "شوكولاتة"}, {qty: 1.5, unit: "كوب", name: "دقيق"}, {qty: 3, unit: "حبة", name: "بيض"}], steps: "1. اخفق البيض.\n2. اخبز.", authorId: "system", authorName: "الموقع" }
+    ];
+
+    // Admin Credentials
+    const ADMIN_USER = "003omar22maker";
+    const ADMIN_PASS = "GgJaj5r1kqmBB$01uz2";
+
+    let state = {
+        user: JSON.parse(localStorage.getItem('siteUser')) || null,
+        recipes: [],
+        favorites: JSON.parse(localStorage.getItem('siteFavs')) || [],
+        ratings: JSON.parse(localStorage.getItem('siteRatings')) || {}, 
+        comments: JSON.parse(localStorage.getItem('siteComments')) || {}, 
+        selectedIngs: [],
+        shoppingList: JSON.parse(localStorage.getItem('siteShopping')) || [],
+        availableIngredients: JSON.parse(localStorage.getItem('availableIngs')) || DEFAULT_INGREDIENTS_LIST,
+        currentServings: 4 
+    };
+
+    // --- 2. Logic & Init ---
+    function init() {
+        let storedRecipes = JSON.parse(localStorage.getItem('userRecipes'));
+        let needsReset = false;
+        
+        if (storedRecipes && storedRecipes.length > 0) {
+            const firstRec = storedRecipes[0];
+            if (firstRec.ingredients && firstRec.ingredients.length > 0 && typeof firstRec.ingredients[0] === 'string') {
+                needsReset = true;
+            }
+        }
+
+        if (!storedRecipes || needsReset) {
+            state.recipes = defaultRecipes;
+            localStorage.setItem('userRecipes', JSON.stringify(defaultRecipes));
+            if(needsReset) showToast('تم تحديث البيانات للنسخة الجديدة', 'info');
+        } else {
+            state.recipes = storedRecipes;
+        }
+
+        renderIngredients();
+        applyFilters();
+        checkAuth();
+        checkTheme();
+        updateFavCount();
+        updateShopCount();
+    }
+
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        let icon = 'fa-info-circle';
+        if(type === 'error') icon = 'fa-times-circle';
+        if(type === 'success') icon = 'fa-check-circle';
+        toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease-in forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // --- 3. Ingredients & Filters ---
+    function renderIngredients() {
+        document.getElementById('ingredientsTags').innerHTML = state.availableIngredients.map(ing => 
+            `<span class="tag ${state.selectedIngs.includes(ing) ? 'active' : ''}" onclick="toggleIngredient('${ing}')">${ing}</span>`
+        ).join('');
+    }
+
+    function toggleIngredient(ing) {
+        if(state.selectedIngs.includes(ing)) state.selectedIngs = state.selectedIngs.filter(i => i !== ing);
+        else state.selectedIngs.push(ing);
+        renderIngredients();
+        applyFilters();
+    }
+
+    function clearIngredients() { 
+        state.selectedIngs = []; 
+        renderIngredients(); 
+        applyFilters(); 
+    }
+    
+    function applyFilters() {
+        const cat = document.getElementById('catFilter').value;
+        const diff = document.getElementById('diffFilter').value;
+        const sort = document.getElementById('sortFilter').value;
+        const search = document.getElementById('mainSearch').value.toLowerCase();
+        
+        let filtered = [...state.recipes];
+
+        if(state.selectedIngs.length > 0) filtered = filtered.filter(r => state.selectedIngs.every(selIng => r.ingredients.some(rIng => rIng.name === selIng)));
+        if(cat !== 'all') filtered = filtered.filter(r => r.category === cat);
+        if(diff !== 'all') filtered = filtered.filter(r => r.difficulty === diff);
+        if(search) filtered = filtered.filter(r => r.name.includes(search));
+        
+        if(sort === 'time') filtered.sort((a,b) => a.time - b.time);
+        else if(sort === 'rating') {
+            filtered.sort((a,b) => {
+                let rateA = state.ratings[a.id] || 0;
+                let rateB = state.ratings[b.id] || 0;
+                return rateB - rateA;
+            });
+        } else {
+            filtered.sort((a,b) => b.id - a.id);
+        }
+
+        renderRecipes(filtered);
+    }
+    
+    function handleSearch(val) { applyFilters(); }
+
+    // --- 4. Render Recipes ---
+    function renderRecipes(data) {
+        const grid = document.getElementById('recipeGrid');
+        const noRes = document.getElementById('noRes');
+        if(data.length === 0) { grid.innerHTML = ''; noRes.style.display = 'block'; return; }
+        noRes.style.display = 'none';
+        
+        grid.innerHTML = data.map(r => {
+            const isFav = state.favorites.includes(r.id);
+            const isOwner = state.user && state.user.id === r.authorId;
+            const isAdmin = state.user && state.user.role === 'admin';
+            const diffClass = r.difficulty === 'easy' ? 'diff-easy' : r.difficulty === 'medium' ? 'diff-med' : 'diff-hard';
+            
+            let controls = '';
+            if(isOwner || isAdmin) {
+                controls = `<div class="admin-controls"><button class="btn-sm btn-edit" onclick="openEditModal(${r.id})">تعديل</button><button class="btn-sm btn-delete" onclick="deleteRecipe(${r.id})">حذف</button></div>`;
+            }
+
+            return `
+                <div class="recipe-card">
+                    <div class="card-image-wrapper">
+                        <img src="${r.img}" class="card-image" alt="${r.name}">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">
+                            ${r.name}
+                            <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${r.id})"><i class="fas fa-heart"></i></button>
+                        </div>
+                        <div class="card-meta">
+                            <span><i class="far fa-clock"></i> ${r.time} د</span>
+                            <span><i class="fas fa-users"></i> ${r.servings || 4}</span>
+                            <span class="difficulty-badge ${diffClass}">${r.difficulty === 'easy' ? 'سهل' : r.difficulty === 'medium' ? 'متوسط' : 'صعب'}</span>
+                        </div>
+                        <button class="btn-view" onclick="openDetail(${r.id})">عرض الوصفة</button>
+                        ${controls}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // --- 5. Auth & CRUD ---
+    function login() {
+        const name = document.getElementById('authName').value.trim();
+        const pass = document.getElementById('authPass').value; 
+        
+        if(!name) { showToast('الرجاء إدخال اسم المستخدم', 'error'); return; }
+        
+        let role = 'user';
+        if(name === ADMIN_USER && pass === ADMIN_PASS) {
+            role = 'admin';
+        }
+        
+        state.user = { id: Date.now(), name: name, role: role };
+        localStorage.setItem('siteUser', JSON.stringify(state.user));
+        closeModal('authModal');
+        checkAuth();
+        renderRecipes(state.recipes); 
+        showToast(`أهلاً بك ${name}!`, 'success');
+    }
+    
+    function logout() { state.user = null; localStorage.removeItem('siteUser'); checkAuth(); renderRecipes(state.recipes); showToast('تم تسجيل الخروج', 'info'); }
+    
+    function checkAuth() {
+        const authArea = document.getElementById('authArea');
+        if(state.user) {
+             let badge = state.user.role === 'admin' ? '<span style="color:red; font-size:0.8rem;">(Admin)</span>' : '';
+             authArea.innerHTML = `<div style="display:flex; align-items:center; gap:0.5rem;"><span>${state.user.name} ${badge}</span><button class="btn btn-outline" onclick="logout()">خروج</button></div>`;
+        } else {
+            authArea.innerHTML = `<button class="btn btn-outline" onclick="document.getElementById('authModal').classList.add('active')">دخول</button>`;
+        }
+    }
+
+    function handleImageUpload(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const MAX_WIDTH = 600;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > MAX_WIDTH) { h *= MAX_WIDTH / w; w = MAX_WIDTH; }
+                    canvas.width = w; canvas.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    document.getElementById('newImg').value = canvas.toDataURL('image/jpeg', 0.7);
+                    showToast('تم رفع الصورة بنجاح', 'success');
+                }
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function addIngRow(val = {qty:'', unit:'', name:''}) {
+        const div = document.createElement('div');
+        div.className = 'ing-row';
+        div.innerHTML = `
+            <input type="number" class="form-input" style="width:60px" placeholder="كمية" value="${val.qty}">
+            <input type="text" class="form-input" style="width:80px" placeholder="وحدة (كوب/جرام)" value="${val.unit}">
+            <input type="text" class="form-input" placeholder="اسم المكون" value="${val.name}">
+            <button class="btn-del-row" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i></button>
+        `;
+        document.getElementById('ingredientsInputs').appendChild(div);
+    }
+
+    function openAddRecipeModal() {
+        if(!state.user) { showToast('يجب تسجيل الدخول لإضافة وصفة', 'error'); document.getElementById('authModal').classList.add('active'); return; }
+        document.getElementById('formTitle').innerText = "إضافة وصفة جديدة";
+        document.getElementById('editRecipeId').value = "";
+        document.getElementById('newName').value = "";
+        document.getElementById('newImg').value = "";
+        document.getElementById('ingredientsInputs').innerHTML = "";
+        addIngRow();
+        document.getElementById('newSteps').value = "";
+        document.getElementById('newCat').value = "eastern";
+        document.getElementById('newDiff').value = "easy";
+        document.getElementById('newTime').value = "";
+        document.getElementById('newServ').value = 4;
+        document.getElementById('addRecipeModal').classList.add('active');
+    }
+
+    function openEditModal(id) {
+        const r = state.recipes.find(x => x.id === id);
+        if(!r) return;
+        if(state.user.role !== 'admin' && state.user.id !== r.authorId) { showToast("لا تملك الصلاحية", 'error'); return; }
+        document.getElementById('formTitle').innerText = "تعديل الوصفة";
+        document.getElementById('editRecipeId').value = id;
+        document.getElementById('newName').value = r.name;
+        document.getElementById('newImg').value = r.img;
+        document.getElementById('ingredientsInputs').innerHTML = "";
+        r.ingredients.forEach(ing => addIngRow(ing));
+        document.getElementById('newSteps').value = r.steps;
+        document.getElementById('newCat').value = r.category;
+        document.getElementById('newDiff').value = r.difficulty;
+        document.getElementById('newTime').value = r.time;
+        document.getElementById('newServ').value = r.servings || 4;
+        document.getElementById('addRecipeModal').classList.add('active');
+    }
+
+    function submitRecipe() {
+        const id = document.getElementById('editRecipeId').value;
+        const ingRows = document.querySelectorAll('.ing-row');
+        const ingredients = [];
+        let newIngredientsFound = false;
+
+        ingRows.forEach(row => {
+            const inputs = row.querySelectorAll('input');
+            if(inputs[2].value.trim() !== '') {
+                const ingName = inputs[2].value.trim();
+                ingredients.push({
+                    qty: parseFloat(inputs[0].value) || 0,
+                    unit: inputs[1].value.trim(),
+                    name: ingName
+                });
+
+                if (!state.availableIngredients.includes(ingName)) {
+                    state.availableIngredients.push(ingName);
+                    newIngredientsFound = true;
+                }
+            }
+        });
+
+        if (newIngredientsFound) {
+            localStorage.setItem('availableIngs', JSON.stringify(state.availableIngredients));
+            renderIngredients();
+            showToast('تمت إضافة مكونات جديدة لقائمة البحث', 'info');
+        }
+
+        const payload = {
+            name: document.getElementById('newName').value,
+            img: document.getElementById('newImg').value || "https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=600",
+            ingredients: ingredients,
+            steps: document.getElementById('newSteps').value,
+            category: document.getElementById('newCat').value,
+            difficulty: document.getElementById('newDiff').value,
+            time: parseInt(document.getElementById('newTime').value) || 30,
+            servings: parseInt(document.getElementById('newServ').value) || 4
+        };
+        
+        if(!payload.name) { showToast('الرجاء إدخال اسم الوصفة', 'error'); return; }
+        
+        if(id) {
+            let index = state.recipes.findIndex(r => r.id == id);
+            state.recipes[index] = {...state.recipes[index], ...payload};
+            showToast('تم تحديث الوصفة بنجاح', 'success');
+        } else {
+            state.recipes.unshift({ id: Date.now(), ...payload, authorId: state.user.id, authorName: state.user.name });
+            showToast('تمت إضافة الوصفة بنجاح!', 'success');
+        }
+        localStorage.setItem('userRecipes', JSON.stringify(state.recipes));
+        closeModal('addRecipeModal');
+        applyFilters();
+    }
+
+    function deleteRecipe(id) {
+        if(!confirm("هل أنت متأكد من حذف الوصفة؟")) return;
+        const recipe = state.recipes.find(r => r.id === id);
+        if(!recipe) return;
+        if(state.user.role === 'admin' || state.user.id === recipe.authorId) {
+            state.recipes = state.recipes.filter(r => r.id !== id);
+            localStorage.setItem('userRecipes', JSON.stringify(state.recipes));
+            applyFilters();
+            showToast('تم حذف الوصفة', 'info');
+        }
+    }
+
+    // --- 6. Detail, Rating, Share, Shopping & Related ---
+    let currentOpenRecipeId = null;
+
+    function openDetail(id) {
+        const r = state.recipes.find(x => x.id === id);
+        if(!r) return;
+        currentOpenRecipeId = id;
+        state.currentServings = r.servings || 4;
+
+        document.getElementById('detailImg').src = r.img;
+        document.getElementById('detailTitle').innerText = r.name;
+        document.getElementById('detailTime').innerText = r.time;
+        document.getElementById('detailServings').innerText = r.servings || 4;
+        document.getElementById('currentServings').innerText = state.currentServings;
+        
+        renderIngredientsList(r);
+        
+        const stepsArr = r.steps.split('\n').filter(s => s.trim() !== '');
+        document.getElementById('detailSteps').innerHTML = `
+            <ul class="steps-checklist">
+                ${stepsArr.map((s, i) => `
+                    <li class="step-item">
+                        <input type="checkbox" id="step${i}">
+                        <label for="step${i}">${s}</label>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+
+        const diffEl = document.getElementById('detailDiff');
+        diffEl.innerText = r.difficulty === 'easy' ? 'سهل' : r.difficulty === 'medium' ? 'متوسط' : 'صعب';
+        diffEl.className = `difficulty-badge diff-${r.difficulty}`;
+
+        const pageUrl = window.location.href;
+        const text = `شوف وصفة ${r.name} الشهية!`;
+        document.getElementById('shareWa').href = `https://api.whatsapp.com/send?text=${text} ${pageUrl}`;
+
+        renderRating(id);
+        renderComments(id);
+        renderRelatedRecipes(r);
+
+        if(state.user) {
+            document.getElementById('commentForm').style.display = 'flex';
+            document.getElementById('loginToComment').style.display = 'none';
+        } else {
+            document.getElementById('commentForm').style.display = 'none';
+            document.getElementById('loginToComment').style.display = 'block';
+        }
+
+        document.getElementById('detailModal').classList.add('active');
+    }
+
+    function renderIngredientsList(recipe) {
+        const ratio = state.currentServings / (recipe.servings || 4);
+        const ul = document.getElementById('detailIngs');
+        
+        ul.innerHTML = recipe.ingredients.map(ing => {
+            let ingText = "";
+            if (typeof ing === 'string') {
+                ingText = ing;
+            } else {
+                let newQty = ing.qty * ratio;
+                newQty = Math.round(newQty * 100) / 100;
+                ingText = `${newQty} ${ing.unit} ${ing.name}`;
+            }
+            return `<li>${ingText}</li>`;
+        }).join('');
+    }
+
+    function adjustServings(change) {
+        const recipe = state.recipes.find(x => x.id === currentOpenRecipeId);
+        let newVal = state.currentServings + change;
+        if(newVal < 1) newVal = 1;
+        state.currentServings = newVal;
+        document.getElementById('currentServings').innerText = newVal;
+        document.getElementById('detailServings').innerText = newVal;
+        renderIngredientsList(recipe);
+    }
+
+    function renderRelatedRecipes(currentRecipe) {
+        const related = state.recipes.filter(r => r.id !== currentRecipe.id && r.category === currentRecipe.category).slice(0, 3);
+        const container = document.getElementById('relatedGrid');
+        if(related.length === 0) {
+            document.getElementById('relatedSection').style.display = 'none';
+            return;
+        }
+        document.getElementById('relatedSection').style.display = 'block';
+        container.innerHTML = related.map(r => `
+            <div class="related-card" onclick="openDetail(${r.id})">
+                <img src="${r.img}" alt="${r.name}">
+                <p>${r.name}</p>
+            </div>
+        `).join('');
+    }
+
+    function addToShoppingList() {
+        const recipe = state.recipes.find(x => x.id === currentOpenRecipeId);
+        if(!recipe) return;
+        
+        recipe.ingredients.forEach(ing => {
+            let itemObj = {};
+            if (typeof ing === 'string') {
+                itemObj = { name: ing, qty: '-', unit: '', recipeId: currentOpenRecipeId };
+            } else {
+                itemObj = {...ing, recipeId: currentOpenRecipeId};
+            }
+
+            let exists = state.shoppingList.find(i => i.name === itemObj.name);
+            if(exists) {
+                if(exists.unit === itemObj.unit && exists.unit !== '-') exists.qty += itemObj.qty; 
+            } else {
+                state.shoppingList.push(itemObj);
+            }
+        });
+        
+        localStorage.setItem('siteShopping', JSON.stringify(state.shoppingList));
+        updateShopCount();
+        showToast(`تمت إضافة مكونات "${recipe.name}" للقائمة`, 'success');
+    }
+
+    function openShoppingList() {
+        renderShoppingList();
+        document.getElementById('shoppingModal').classList.add('active');
+    }
+
+    function renderShoppingList() {
+        const container = document.getElementById('shoppingListContainer');
+        if(state.shoppingList.length === 0) {
+            container.innerHTML = "<p style='text-align:center; color:var(--muted);'>القائمة فارغة.</p>";
+            return;
+        }
+        container.innerHTML = state.shoppingList.map((item, index) => `
+            <div style="display:flex; justify-content:space-between; padding:0.5rem; border-bottom:1px solid var(--bg);">
+                <label style="cursor:pointer;">
+                    <input type="checkbox" onchange="toggleShopItem(${index})" style="margin-left:5px; accent-color:var(--primary);">
+                    <span class="${item.checked ? 'text-muted' : ''}" style="text-decoration:${item.checked ? 'line-through' : 'none'}">
+                    ${item.qty} ${item.unit} ${item.name}
+                    </span>
+                </label>
+                <button onclick="removeShopItem(${index})" style="color:#e74c3c; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
+            </div>
+        `).join('');
+    }
+
+    function toggleShopItem(index) {
+        state.shoppingList[index].checked = !state.shoppingList[index].checked;
+        localStorage.setItem('siteShopping', JSON.stringify(state.shoppingList));
+        renderShoppingList();
+    }
+    function removeShopItem(index) {
+        state.shoppingList.splice(index, 1);
+        localStorage.setItem('siteShopping', JSON.stringify(state.shoppingList));
+        updateShopCount();
+        renderShoppingList();
+    }
+    function clearShoppingList() {
+        state.shoppingList = [];
+        localStorage.setItem('siteShopping', JSON.stringify(state.shoppingList));
+        updateShopCount();
+        renderShoppingList();
+    }
+    function updateShopCount() { document.getElementById('shopNotify').innerText = state.shoppingList.length; }
+
+    function copyLink() { navigator.clipboard.writeText(window.location.href); showToast('تم نسخ الرابط!', 'success'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function toggleFav(id) {
+        if(state.favorites.includes(id)) state.favorites = state.favorites.filter(i => i !== id);
+        else state.favorites.push(id);
+        localStorage.setItem('siteFavs', JSON.stringify(state.favorites));
+        updateFavCount(); applyFilters();
+    }
+    function updateFavCount() { document.getElementById('favNotify').innerText = state.favorites.length; }
+    function openFavorites() { renderRecipes(state.recipes.filter(r => state.favorites.includes(r.id))); }
+    
+    function toggleTheme() {
+        document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        localStorage.setItem('theme', document.body.getAttribute('data-theme'));
+        document.getElementById('themeIcon').className = `fas fa-${document.body.getAttribute('data-theme') === 'dark' ? 'sun' : 'moon'}`;
+    }
+    function checkTheme() {
+        const t = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', t);
+        document.getElementById('themeIcon').className = `fas fa-${t === 'dark' ? 'sun' : 'moon'}`;
+    }
+
+    function renderRating(id) {
+        const currentRating = state.ratings[id] || 0;
+        let html = "";
+        for(let i=5; i>=1; i--) {
+            const checked = i === currentRating ? "checked" : "";
+            html += `<input type="radio" id="star${i}" name="rating" value="${i}" ${checked} onchange="setRating(${id}, ${i})" ${!state.user ? 'disabled' : ''}>`;
+            html += `<label for="star${i}" class="${state.user ? '' : 'disabled'}"><i class="fas fa-star"></i></label>`;
+        }
+        document.getElementById('ratingStars').innerHTML = html;
+    }
+    function setRating(recipeId, val) {
+        if(!state.user) { showToast('سجل دخولك لتقييم الوصفة', 'error'); return; }
+        state.ratings[recipeId] = val;
+        localStorage.setItem('siteRatings', JSON.stringify(state.ratings));
+        showToast('شكراً لتقييمك!', 'success');
+        applyFilters();
+    }
+    function renderComments(id) {
+        const comments = state.comments[id] || [];
+        const list = document.getElementById('commentsList');
+        if(comments.length === 0) { list.innerHTML = "<p style='color:var(--muted); font-size:0.9rem;'>لا توجد تعليقات بعد.</p>"; return; }
+        list.innerHTML = comments.map(c => `
+            <div class="comment-box">
+                <div class="comment-user">${c.user} <span class="comment-date">${c.date}</span></div>
+                <p>${c.text}</p>
+            </div>
+        `).join('');
+    }
+    function addComment() {
+        if(!state.user) return;
+        const input = document.getElementById('commentInput');
+        if(!input.value.trim()) return;
+        const title = document.getElementById('detailTitle').innerText;
+        const id = state.recipes.find(r => r.name === title)?.id;
+        if(!id) return;
+        if(!state.comments[id]) state.comments[id] = [];
+        state.comments[id].push({ user: state.user.name, text: input.value, date: new Date().toLocaleDateString('ar-EG') });
+        localStorage.setItem('siteComments', JSON.stringify(state.comments));
+        renderComments(id);
+        input.value = '';
+    }
+
+    // --- Helper Functions for Static Pages ---
+    function openAboutModal() {
+        closeModal('detailModal');
+        document.getElementById('aboutModal').classList.add('active');
+    }
+
+    function openContactModal() {
+        closeModal('detailModal');
+        document.getElementById('contactModal').classList.add('active');
+    }
+
+    // Start App
+    init();
+</script>
+</body>
+</html>
